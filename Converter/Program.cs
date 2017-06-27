@@ -11,8 +11,47 @@ namespace Converter
     {
         string name;
         Vector3 position;
-        Vector3 rotation;
-        //fields: name, orientation, position
+        Vector3 orientation; //eventually W must be calculated
+
+        public void setName(string n)
+        {
+            name = n;
+        }
+
+        public void setPosition(int x, int y, int z)
+        {
+            position.X = x;
+            position.Y = y;
+            position.Z = z;
+        }
+
+        public void setOrientation(int x, int y, int z)
+        {
+            orientation.X = x;
+            orientation.Y = y;
+            orientation.Z = z;
+        }
+        
+        public string getName()
+        {
+            return name;
+        }
+
+        public Vector3 getPosition()
+        {
+            return position;
+        }
+
+        public Vector3 getOrientation()
+        {
+            return orientation;
+        }
+
+        public int calculateW(Vector3 v)
+        {
+            return 0;
+        }
+
     }
     class Program
     {
@@ -22,7 +61,12 @@ namespace Converter
             string line = "";
             string prev = "";
             int numberFrames = 0;
-            List<String> bones = new List<String>();
+            int numberChannels = 0;
+            bool beginData = false;
+
+            List<string> motionData = new List<string>();
+
+            List<string> bones = new List<string>();
 
             // Read the file and display it line by line.
             System.IO.StreamReader file =
@@ -38,7 +82,6 @@ namespace Converter
                  *********************************/
                 line = new string(line.ToCharArray().Where(c => !Char.IsWhiteSpace(c)).ToArray());
 
-
                  /********************************
                  *                               *
                  * Find out number of frames     *
@@ -50,8 +93,45 @@ namespace Converter
                         line.Length - 8),
                         out numberFrames);
                 }
+
+                /********************************
+                *                               *
+                * Find out total number of      *
+                * channels:                     *
+                *                               *
+                * "flexibility to allow for     *
+                * segments which have any       *
+                * number of channels which can  *
+                * appear in any order."         *
+                *                               *
+                *********************************/
+                if (line.IndexOf("CHANNELS") == 0)
+                {
+                    int n;
+                    Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
+                        out n);
+                    numberChannels += n;
+                }
+
+                /********************************
+                *                               *
+                * Find where motion data begins *
+                * Store data in its own list of *
+                * strings                       *
+                *                               *
+                * ******************************/
+                if (prev.IndexOf("FrameTime:") == 0)
+                {
+                    beginData = true;
+                }
                 
-                
+                if (beginData)
+                {
+                    motionData.Add(line);
+                }
+
+
+
 
                 foreach (char c in line)
                 {
@@ -60,7 +140,7 @@ namespace Converter
 
                         /********************************
                         *                               *
-                        * Get names of bones            *
+                        * Get names of each bone        *
                         *                               *
                         *********************************/
                         if (prev.IndexOf("ROOT") == 0)
@@ -73,9 +153,6 @@ namespace Converter
                             bones.Add(prev.Substring(prev.IndexOf("JOINT") + 5,
                                 prev.Length - 5));
                         }
-
-
-
                         braceCount += 1;
                     }
                 }
@@ -87,11 +164,19 @@ namespace Converter
             foreach (var bone in bones)
             {
                 //instantiate bone object
-                Console.WriteLine(bone);
+                Bone b = new Bone();
+                b.setName(bone);
+                Console.WriteLine(b.getName());
             }
 
+            Console.WriteLine("\nTotal number of channels -------> " + numberChannels + "\n");
+            Console.WriteLine("\nTotal number of braces ------->: " + braceCount + "\n" );
+            Console.WriteLine("\nMotion Data:");
+            foreach (var l in motionData)
+            {
+                Console.WriteLine(l);
+            }
 
-            Console.WriteLine("bracecount: " + braceCount);
             file.Close();
 
             // Suspend the screen.

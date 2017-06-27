@@ -1,0 +1,8 @@
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\bin\Debug\Converter.exe.config
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\bin\Debug\Converter.exe
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\bin\Debug\Converter.pdb
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\obj\Debug\Converter.csprojResolveAssemblyReference.cache
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\obj\Debug\Converter.exe
+c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\obj\Debug\Converter.pdb
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\System.Numerics.Vectors.xml

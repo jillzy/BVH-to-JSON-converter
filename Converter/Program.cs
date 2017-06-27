@@ -10,12 +10,24 @@ namespace Converter
     class Bone
     {
         string name;
+        string type;
+        int numberChannels;
         Vector3 position;
         Vector3 orientation; //eventually W must be calculated
 
-        public void setName(string n)
+        public void setName(string s)
         {
-            name = n;
+            name = s;
+        }
+
+        public void setType(string s)
+        {
+            type = s;
+        }
+
+        public void setNumberChannels(int i)
+        {
+            numberChannels = i;
         }
 
         public void setPosition(int x, int y, int z)
@@ -35,6 +47,16 @@ namespace Converter
         public string getName()
         {
             return name;
+        }
+
+        public string getType()
+        {
+            return type;
+        }
+
+        public int getNumberChannels()
+        {
+            return numberChannels;
         }
 
         public Vector3 getPosition()
@@ -57,20 +79,22 @@ namespace Converter
     {
         static void Main(string[] args)
         {
-            int braceCount = 0;
             string line = "";
             string prev = "";
+            string currentBone = "";
+
             int numberFrames = 0;
-            int numberChannels = 0;
+            int channelTotal = 0;
+
             bool beginData = false;
 
             List<string> motionData = new List<string>();
-
-            List<string> bones = new List<string>();
+            List<Bone> bones = new List<Bone>();
 
             // Read the file and display it line by line.
             System.IO.StreamReader file =
                new System.IO.StreamReader("C:\\Users\\jy\\Desktop\\test.txt");
+   
 
             while ((line = file.ReadLine()) != null)
             {
@@ -94,24 +118,7 @@ namespace Converter
                         out numberFrames);
                 }
 
-                /********************************
-                *                               *
-                * Find out total number of      *
-                * channels:                     *
-                *                               *
-                * "flexibility to allow for     *
-                * segments which have any       *
-                * number of channels which can  *
-                * appear in any order."         *
-                *                               *
-                *********************************/
-                if (line.IndexOf("CHANNELS") == 0)
-                {
-                    int n;
-                    Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
-                        out n);
-                    numberChannels += n;
-                }
+
 
                 /********************************
                 *                               *
@@ -135,42 +142,87 @@ namespace Converter
 
                 foreach (char c in line)
                 {
+                    Bone b = new Bone();
+                    string name = "";
+                    string type = "";
                     if (c == '{')
                     {
 
                         /********************************
                         *                               *
-                        * Get names of each bone        *
+                        * Get name and type of          *
+                        * each bone                     *
                         *                               *
                         *********************************/
                         if (prev.IndexOf("ROOT") == 0)
                         {
-                            bones.Add(prev.Substring(prev.IndexOf("ROOT") + 4,
-                                prev.Length - 4));
+                            name = prev.Substring(prev.IndexOf("ROOT") + 4,
+                                prev.Length - 4);
+                            type = "root";
+                           
                         }
-                        if (prev.IndexOf("JOINT") == 0)
+                        else if (prev.IndexOf("JOINT") == 0)
                         {
-                            bones.Add(prev.Substring(prev.IndexOf("JOINT") + 5,
-                                prev.Length - 5));
+                            name = prev.Substring(prev.IndexOf("JOINT") + 5,
+                                prev.Length - 5);
+                            type = "joint";
+                            
+                        } else
+                        {
+                            break;
                         }
-                        braceCount += 1;
+                        currentBone = name;
+                        b.setName(name);
+                        b.setType(type);
+                        bones.Add(b);
                     }
                 }
+
+
+
+                /********************************
+                *                               *
+                * Find out total number of      *
+                * channels:                     *
+                *                               *
+                * "flexibility to allow for     *
+                * segments which have any       *
+                * number of channels which can  *
+                * appear in any order."         *
+                *                               *
+                *********************************/
+                if (line.IndexOf("CHANNELS") == 0)
+                {
+                    int n;
+                    Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
+                        out n);
+                    //set channels for current bone
+                    foreach (var bone in bones)
+                    {
+                        if (bone.getName() == currentBone)
+                        {
+                            bone.setNumberChannels(n);
+                        }
+                    }
+                    channelTotal += n;
+                }
+
+
                 Console.WriteLine(line);
                 prev = line;
             }
-            
+
+
+
 
             foreach (var bone in bones)
             {
-                //instantiate bone object
-                Bone b = new Bone();
-                b.setName(bone);
-                Console.WriteLine(b.getName());
+                Console.WriteLine(bone.getName());
+                Console.WriteLine(bone.getType());
+                Console.WriteLine(bone.getNumberChannels());
             }
 
-            Console.WriteLine("\nTotal number of channels -------> " + numberChannels + "\n");
-            Console.WriteLine("\nTotal number of braces ------->: " + braceCount + "\n" );
+            Console.WriteLine("\nTotal number of channels -------> " + channelTotal + "\n");
             Console.WriteLine("\nMotion Data:");
             foreach (var l in motionData)
             {

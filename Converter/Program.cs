@@ -15,14 +15,16 @@ namespace Converter
         public string type;
         public Bone parent;
 
-        public int numberChannels;
+
 
         public Vector3 position;
         public Vector3 rotation;
 
+        public List<Bone> bones = new List<Bone>();
         public List<string> channels = new List<string>();
         public List<Bone> children = new List<Bone>();
-        public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
+        //public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
+        public List<Dictionary<string, string>> frameData = new List<Dictionary<string, string>>();
 
         public void print()
         {
@@ -53,7 +55,7 @@ namespace Converter
             int frameTotal = 0;
             
             List<Bone> roots = new List<Bone>();
-
+            List<string[]> splitData = new List<string[]>();
             List<string> motionData = new List<string>();
             List<Frame> frames = new List<Frame>();
             List<Bone> bones = new List<Bone>();
@@ -79,11 +81,7 @@ namespace Converter
                 }
 
 
-
-
-
-
-                if (line.Contains("ROOT"))
+                else if (line.Contains("ROOT"))
                 {
                     Bone b = new Bone();
                     char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
@@ -91,6 +89,7 @@ namespace Converter
                     b.name = name;
                     b.type = ("root");
                     roots.Add(b);
+                    bones.Add(b);
                 }
                 else if (line.Contains("JOINT"))
                 {
@@ -100,8 +99,10 @@ namespace Converter
                     b.name = name;
                     b.type = "joint";
                     currentBone.children.Add(b);
+                    bones.Add(b);
                     b.parent = currentBone;
-                } else if (line.Contains("End Site"))
+                }
+                else if (line.Contains("End Site"))
                 {
                     Bone b = new Bone();
                     b.type = "End Site";
@@ -119,19 +120,14 @@ namespace Converter
                     {
                         currentBone = currentBone.children.Last();
                     }
-                    
+
                 }
                 else if (line.Contains("}"))
                 {
                     currentBone = currentBone.parent;
-                } else if (line.Contains("Frame Time:"))
-                {
-                    while ((line = file.ReadLine()) != null)
-                    {
-                        motionData.Add(line);
-                    }
+                }
 
-                } else if (line.Contains("CHANNELS"))
+                else if (line.Contains("CHANNELS"))
                 {
                     char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
                     string[] keys = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
@@ -141,90 +137,62 @@ namespace Converter
                     }
                 }
 
+                else if (line.Contains("Frame Time:"))
+
+                {
+                    int frameCount = 0;
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        motionData.Add(line);
+                        //split by numbers
+                        foreach (var md in motionData) {
+                            
+                            char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
+                            string[] data = md.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                        }
+                        
+                        //for each frame
+                        foreach (var f in motionData)
+                        {
+                            Frame frame = new Frame();
+                            frame.name = "frame" + frameCount;
+                            int dataIter = 0;
+                            
+                            Dictionary<string, string> tmp = new Dictionary<string, string>();
+                            //go through each bone in order
+                            foreach (Bone b in bones)
+                            {
+                                int channelIter = 0;
+                                int frameIter = 0;
+                                while(channelIter < b.channels.Count-1)
+                                {
+                                    Console.WriteLine("Channel iter ------> " + channelIter);
+                                    Console.WriteLine("Data iter ------> " + dataIter);
+
+                                    //tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
+                                    channelIter += 1;
+                                    dataIter += 1;
+                                }
+                                b.frameData.Add(tmp);
+                            }
+
+
+                            frameCount += 1;
+                        }
+                    }
+
+
+                }
+
                 
 
 
-                /********************************
-                *                               *
-                * Find out total number of      *
-                * channels:                     *
-                *                               *
-                * "flexibility to allow for     *
-                * segments which have any       *
-                * number of channels which can  *
-                * appear in any order."         *
-                *                               *
-                *********************************/
-                //    if (line.Contains("CHANNELS"))
-                //    {
-                //        int n;
-
-                //        line = new string(line.ToCharArray().Where(c => !Char.IsWhiteSpace(c)).ToArray());
-                //        Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
-                //            out n);
-                //        //set channels for current bone
-                //        //add channel keys into dictionary
-                //        foreach (var bone in bones)
-                //        {
-                //            if (bone.getName() == currentBone)
-                //            {
-                //                Console.WriteLine("*********************** THE BONE IS: " + currentBone);
-                //                if (line.Contains("position"))
-                //                {
-                //                    bone.addKeys("Xposition");
-                //                    bone.addKeys("Yposition");
-                //                    bone.addKeys("Zposition");
-
-                //                }
-                //                if (line.Contains("rotation"))
-                //                {
-                //                    bone.addKeys("Xrotation");
-                //                    bone.addKeys("Yrotation");
-                //                    bone.addKeys("Zrotation");
-                //                }
-
-                //                bone.setNumberChannels(n);
-                //            }
-                //        }
-                //        channelTotal += n;
-                //    }
-
-
-                //    //Console.WriteLine(line);
-                //    prev = line;
-                //}
+               
 
 
 
 
 
-
-
-                ////    for (int i = 0; i < bone.getNumberChannels(); i++)
-                ////    {
-                ////        /*int j = 0;
-                ////        while (j < frameTotal)
-                ////        {
-                ////            frame.setName("frame" + j);
-                ////            Console.WriteLine(frame.getName());
-                ////            frames.Add(frame);
-                ////            j += 1;
-                ////        }
-                ////        //read an item from motion data*/
-                ////    }
-                ////    Console.WriteLine(bone.getName());
-                ////    Console.WriteLine(bone.getType());
-                ////    Console.WriteLine(bone.getNumberChannels());
-
-                ////}
-
-                ////Console.WriteLine("\nTotal number of channels -------> " + channelTotal + "\n");
-                ////Console.WriteLine("\nTotal number of frames -------> " + frameTotal + "\n");
-                ////Console.WriteLine("\nMotion Data:");
-                //foreach (var l in motionData)
-                //{
-                //    Console.WriteLine(l);
-                //}
             }
             file.Close();
             foreach (Bone bone in roots) {

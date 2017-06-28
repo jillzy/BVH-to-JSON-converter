@@ -131,9 +131,12 @@ namespace Converter
                 {
                     char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
                     string[] keys = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 1; i < keys.Length; i++)
+
+
+                    for (int i = 2; i < keys.Length; i++) //but for some reason not getting the last key (eg. y position)
                     {
                         currentBone.channels.Add(keys[i]);
+
                     }
                 }
 
@@ -144,7 +147,6 @@ namespace Converter
                     while ((line = file.ReadLine()) != null)
                     {
                         motionData.Add(line);
-                        Console.WriteLine(line);
                     }
                     //split by numbers
                     foreach (var md in motionData)
@@ -165,30 +167,29 @@ namespace Converter
                         foreach (Bone b in bones)
                         {
                             Dictionary<string, string> tmp = new Dictionary<string, string>();
-                            Console.WriteLine("\n\n\n\n\n\n"+b.name);
                             int channelIter = 0;
-                            while(channelIter < b.channels.Count-1)
+                            while(channelIter < b.channels.Count)
                             {
-              
-                                tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]); //same keyalready added
+
+                                tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
 
 
-                                
-                                Console.WriteLine("Channel Iter -----> " + channelIter);
-                                Console.WriteLine("Frame Iter -----> " + frameIter);
-                                Console.WriteLine("Data Iter -----> " + dataIter);
                                 channelIter += 1;
                                 dataIter += 1;
                             }
 
+                         
 
                             b.frameData.Add(tmp);
+
+                            foreach (var k in b.frameData[0].Keys)
+                            {
+                                Console.WriteLine(b.frameData[0][k]);
+                            }
                         }
 
 
                         frameCount += 1;
-                        Console.WriteLine(motionData.Count);
-                        Console.WriteLine(splitData.Count);
 
                     }
 

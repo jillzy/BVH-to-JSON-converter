@@ -161,6 +161,9 @@ namespace Converter
                 
                 if (beginData)
                 {
+                    //collapse white space
+                    line = System.Text.RegularExpressions.Regex.Replace(line, @"\s+", " ");
+
                     motionData.Add(line);
                 }
 
@@ -265,8 +268,20 @@ namespace Converter
             {
 
                 Frame frame = new Frame();
-                //find out the number of channels it has, then read in from motiondata to each channel
+                foreach (var data in motionData)
+                {
+                    string[] dataItems = data.Split(null);
+                    foreach (var d in dataItems )
+                    {
+                        {
+                            Console.WriteLine("Item: " + d);
+                        }
+                    }
+
+                }
                 //todo: dont assumesorder xyz
+
+                
                 for (int i = 0; i < bone.getNumberChannels(); i++)
                 {
                     /*int j = 0;
@@ -276,8 +291,8 @@ namespace Converter
                         Console.WriteLine(frame.getName());
                         frames.Add(frame);
                         j += 1;
-                    }*/
-                    //read an item from motion data
+                    }
+                    //read an item from motion data*/
                 }
                 Console.WriteLine(bone.getName());
                 Console.WriteLine(bone.getType());

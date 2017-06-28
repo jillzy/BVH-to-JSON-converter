@@ -168,9 +168,10 @@ namespace Converter
                         {
                             Dictionary<string, string> tmp = new Dictionary<string, string>();
                             int channelIter = 0;
+                            //for each of its channels
                             while(channelIter < b.channels.Count)
                             {
-
+                                //add the chanel key and corresponding data to a dict
                                 tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
 
 
@@ -178,29 +179,34 @@ namespace Converter
                                 dataIter += 1;
                             }
 
-                         
-
+                            
+                            //add dict to a list of frameData
                             b.frameData.Add(tmp);
-
-                            foreach (var k in b.frameData[0].Keys)
-                            {
-                                Console.WriteLine(b.frameData[0][k]);
-                            }
+                            
                         }
 
 
                         frameCount += 1;
 
+
                     }
 
+                    //foreach (Bone b in bones)
+                    //{
+                    //    Console.WriteLine(b.frameData.Count);
+                    //    foreach (var k in b.frameData[1].Keys)
+                    //    {
+                    //        Console.WriteLine(b.frameData[1][k]);
+                    //    }
+                    //}
 
 
                 }
 
-                
 
 
-               
+
+
 
 
 

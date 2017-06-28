@@ -154,7 +154,7 @@ namespace Converter
                 * strings                       *
                 *                               *
                 * ******************************/
-                if (prev.IndexOf("FrameTime:") == 0)
+                if (prev.Contains("Frame Time:"))
                 {
                     beginData = true;
                 }

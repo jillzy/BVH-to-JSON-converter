@@ -144,42 +144,51 @@ namespace Converter
                     while ((line = file.ReadLine()) != null)
                     {
                         motionData.Add(line);
-                        //split by numbers
-                        foreach (var md in motionData) {
-                            
-                            char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
-                            string[] data = md.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-                        }
-                        
-                        //for each frame
-                        foreach (var f in motionData)
-                        {
-                            Frame frame = new Frame();
-                            frame.name = "frame" + frameCount;
-                            int dataIter = 0;
-                            
-                            Dictionary<string, string> tmp = new Dictionary<string, string>();
-                            //go through each bone in order
-                            foreach (Bone b in bones)
-                            {
-                                int channelIter = 0;
-                                int frameIter = 0;
-                                while(channelIter < b.channels.Count-1)
-                                {
-                                    Console.WriteLine("Channel iter ------> " + channelIter);
-                                    Console.WriteLine("Data iter ------> " + dataIter);
-
-                                    //tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
-                                    channelIter += 1;
-                                    dataIter += 1;
-                                }
-                                b.frameData.Add(tmp);
-                            }
-
-
-                            frameCount += 1;
-                        }
+                        Console.WriteLine(line);
                     }
+                    //split by numbers
+                    foreach (var md in motionData)
+                    {
+                        char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
+                        string[] data = md.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                        Console.WriteLine("im in here");
+                        Console.WriteLine(motionData.Count);
+                        
+
+                    }
+                    Console.WriteLine("test1");
+
+
+                    //for each frame
+                    foreach (var f in motionData)
+                    {
+                        Frame frame = new Frame();
+                        frame.name = "frame" + frameCount;
+                        int dataIter = 0;
+                            
+                        Dictionary<string, string> tmp = new Dictionary<string, string>();
+                        //go through each bone in order
+                        foreach (Bone b in bones)
+                        {
+                            int channelIter = 0;
+                            int frameIter = 0;
+                            while(channelIter < b.channels.Count-1)
+                            {
+                                //console.writeline("channel iter ------> " + channeliter);
+                                //console.writeline(b.channels[channeliter]);
+                                //console.writeline("data iter ------> " + dataiter);
+                                //console.writeline(splitdata.count);
+                                //tmp.add(b.channels[channeliter], splitdata[frameiter][dataiter]);
+                                channelIter += 1;
+                                dataIter += 1;
+                            }
+                            b.frameData.Add(tmp);
+                        }
+
+
+                        frameCount += 1;
+                    }
+                    
 
 
                 }
@@ -196,7 +205,7 @@ namespace Converter
             }
             file.Close();
             foreach (Bone bone in roots) {
-                bone.print();
+                //bone.print();
             }
             
             // Suspend the screen.

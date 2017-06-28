@@ -151,14 +151,9 @@ namespace Converter
                     {
                         char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
                         string[] data = md.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-                        Console.WriteLine("im in here");
-                        Console.WriteLine(motionData.Count);
-                        
+                        splitData.Add(data);                  
 
                     }
-                    Console.WriteLine("test1");
-
-
                     //for each frame
                     foreach (var f in motionData)
                     {
@@ -170,18 +165,17 @@ namespace Converter
                         //go through each bone in order
                         foreach (Bone b in bones)
                         {
-                            int channelIter = 0;
+                            int channelIter = 0
                             int frameIter = 0;
                             while(channelIter < b.channels.Count-1)
                             {
-                                //console.writeline("channel iter ------> " + channeliter);
-                                //console.writeline(b.channels[channeliter]);
-                                //console.writeline("data iter ------> " + dataiter);
-                                //console.writeline(splitdata.count);
-                                //tmp.add(b.channels[channeliter], splitdata[frameiter][dataiter]);
+                                //tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
                                 channelIter += 1;
                                 dataIter += 1;
                             }
+                            Console.WriteLine("Channel Iter -----> " +channelIter);
+                            Console.WriteLine("Data Iter -----> " + dataIter);
+
                             b.frameData.Add(tmp);
                         }
 

@@ -133,19 +133,12 @@ namespace Converter
             while ((line = file.ReadLine()) != null)
             {
 
-                /**********************************
-                 *                                *
-                 * Get rid of whitespace          *
-                 *                                *
-                 *********************************/
-                line = new string(line.ToCharArray().Where(c => !Char.IsWhiteSpace(c)).ToArray());
-
                  /********************************
                  *                               *
                  * Find out number of frames     *
                  *                               *
                  *********************************/
-                if (line.IndexOf("Frames:") == 0)
+                if (line.Contains("Frames:"))
                 {
                     Int32.TryParse(line.Substring(line.IndexOf("Frames:") + 7,
                         line.Length - 7),
@@ -174,28 +167,28 @@ namespace Converter
 
 
 
-                foreach (char c in line)
+                foreach (char ch in line)
                 {
                     Bone b = new Bone();
                     string name = "";
                     string type = "";
-                    if (c == '{')
+                    if (ch == '{')
                     {
-
                         /********************************
                         *                               *
                         * Get name and type of          *
                         * each bone                     *
                         *                               *
                         *********************************/
-                        if (prev.IndexOf("ROOT") == 0)
+                        prev = new string(prev.ToCharArray().Where(c => !Char.IsWhiteSpace(c)).ToArray());
+                        if (prev.Contains("ROOT"))
                         {
                             name = prev.Substring(prev.IndexOf("ROOT") + 4,
                                 prev.Length - 4);
                             type = "root";
                            
                         }
-                        else if (prev.IndexOf("JOINT") == 0)
+                        else if (prev.Contains("JOINT"))
                         {
                             name = prev.Substring(prev.IndexOf("JOINT") + 5,
                                 prev.Length - 5);
@@ -225,10 +218,11 @@ namespace Converter
                 * appear in any order."         *
                 *                               *
                 *********************************/
-                if (line.IndexOf("CHANNELS") == 0)
+                if (line.Contains("CHANNELS"))
                 {
                     int n;
 
+                    line = new string(line.ToCharArray().Where(c => !Char.IsWhiteSpace(c)).ToArray());
                     Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
                         out n);
                     //set channels for current bone
@@ -237,6 +231,7 @@ namespace Converter
                     {
                         if (bone.getName() == currentBone)
                         {
+                            Console.WriteLine("*********************** THE BONE IS: " + currentBone);
                             if (line.Contains("position"))
                             {
                                 bone.addKeys("Xposition");
@@ -258,7 +253,7 @@ namespace Converter
                 }
 
 
-                Console.WriteLine(line);
+                //Console.WriteLine(line);
                 prev = line;
             }
 
@@ -268,6 +263,7 @@ namespace Converter
             //logic
             foreach (var bone in bones)
             {
+
                 Frame frame = new Frame();
                 //find out the number of channels it has, then read in from motiondata to each channel
                 //todo: dont assumesorder xyz

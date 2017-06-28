@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace Converter
 {
@@ -162,7 +163,7 @@ namespace Converter
                 if (beginData)
                 {
                     //collapse white space
-                    line = System.Text.RegularExpressions.Regex.Replace(line, @"\s+", " ");
+                    //line = System.Text.RegularExpressions.Regex.Replace(line, @"\s+", " ");
 
                     motionData.Add(line);
                 }
@@ -270,11 +271,12 @@ namespace Converter
                 Frame frame = new Frame();
                 foreach (var data in motionData)
                 {
-                    string[] dataItems = data.Split(null);
-                    foreach (var d in dataItems )
+                    string[] dataItems = Regex.Split(data, @"\s+");
+                    int i = 0;
+                    foreach (var d in dataItems)
                     {
-                        {
-                            Console.WriteLine("Item: " + d);
+                        if (d != "") {
+                            Console.WriteLine("Item " + i++ + ": " + d);
                         }
                     }
 

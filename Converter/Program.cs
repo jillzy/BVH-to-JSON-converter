@@ -7,13 +7,18 @@ using System.Numerics;
 
 namespace Converter
 {
+    
     class Bone
     {
         string name;
         string type;
+
         int numberChannels;
+
         Vector3 position;
-        Vector3 orientation; //eventually W must be calculated
+        Vector3 rotation;
+
+        Dictionary<string, float> data = new Dictionary<string, float>();
 
         public void setName(string s)
         {
@@ -39,9 +44,9 @@ namespace Converter
 
         public void setOrientation(int x, int y, int z)
         {
-            orientation.X = x;
-            orientation.Y = y;
-            orientation.Z = z;
+            rotation.X = x;
+            rotation.Y = y;
+            rotation.Z = z;
         }
         
         public string getName()
@@ -64,9 +69,14 @@ namespace Converter
             return position;
         }
 
-        public Vector3 getOrientation()
+        public Vector3 getRotation()
         {
-            return orientation;
+            return rotation;
+        }
+
+        public void addKeys(string s)
+        {
+            data.Add(s, 0);
         }
 
         public int calculateW(Vector3 v)
@@ -75,6 +85,29 @@ namespace Converter
         }
 
     }
+    class Frame
+    {
+        string name = "";
+        List<Bone> bones = new List<Bone>();
+
+        public void addBone(Bone b)
+        {
+            bones.Add(b);
+        }
+        public void setName(string s)
+        {
+            name = s;
+        }
+        public string getName()
+        {
+            return name;
+        }
+        public List<Bone> getBones()
+        {
+            return bones;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -83,12 +116,13 @@ namespace Converter
             string prev = "";
             string currentBone = "";
 
-            int numberFrames = 0;
+            int frameTotal = 0;
             int channelTotal = 0;
 
             bool beginData = false;
 
             List<string> motionData = new List<string>();
+            List<Frame> frames = new List<Frame>();
             List<Bone> bones = new List<Bone>();
 
             // Read the file and display it line by line.
@@ -112,10 +146,10 @@ namespace Converter
                  *                               *
                  *********************************/
                 if (line.IndexOf("Frames:") == 0)
-                { 
-                    Int32.TryParse(line.Substring(line.IndexOf("Frames:") + 8,
-                        line.Length - 8),
-                        out numberFrames);
+                {
+                    Int32.TryParse(line.Substring(line.IndexOf("Frames:") + 7,
+                        line.Length - 7),
+                        out frameTotal);
                 }
 
 
@@ -194,13 +228,29 @@ namespace Converter
                 if (line.IndexOf("CHANNELS") == 0)
                 {
                     int n;
+
                     Int32.TryParse(new string(line.ToCharArray().Where(c => Char.IsDigit(c)).ToArray()),
                         out n);
                     //set channels for current bone
+                    //add channel keys into dictionary
                     foreach (var bone in bones)
                     {
                         if (bone.getName() == currentBone)
                         {
+                            if (line.Contains("position"))
+                            {
+                                bone.addKeys("Xposition");
+                                bone.addKeys("Yposition");
+                                bone.addKeys("Zposition");
+
+                            }
+                            if (line.Contains("rotation"))
+                            {
+                                bone.addKeys("Xrotation");
+                                bone.addKeys("Yrotation");
+                                bone.addKeys("Zrotation");
+                            }
+
                             bone.setNumberChannels(n);
                         }
                     }
@@ -215,14 +265,32 @@ namespace Converter
 
 
 
+            //logic
             foreach (var bone in bones)
             {
+                Frame frame = new Frame();
+                //find out the number of channels it has, then read in from motiondata to each channel
+                //todo: dont assumesorder xyz
+                for (int i = 0; i < bone.getNumberChannels(); i++)
+                {
+                    /*int j = 0;
+                    while (j < frameTotal)
+                    {
+                        frame.setName("frame" + j);
+                        Console.WriteLine(frame.getName());
+                        frames.Add(frame);
+                        j += 1;
+                    }*/
+                    //read an item from motion data
+                }
                 Console.WriteLine(bone.getName());
                 Console.WriteLine(bone.getType());
                 Console.WriteLine(bone.getNumberChannels());
+               
             }
 
             Console.WriteLine("\nTotal number of channels -------> " + channelTotal + "\n");
+            Console.WriteLine("\nTotal number of frames -------> " + frameTotal + "\n");
             Console.WriteLine("\nMotion Data:");
             foreach (var l in motionData)
             {

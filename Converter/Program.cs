@@ -155,7 +155,7 @@ namespace Converter
 
                     }
                     //for each frame
-                    foreach (var f in motionData)
+                    for (int frameIter = 0; frameIter < motionData.Count; frameIter++)
                     {
                         Frame frame = new Frame();
                         frame.name = "frame" + frameCount;
@@ -165,24 +165,32 @@ namespace Converter
                         //go through each bone in order
                         foreach (Bone b in bones)
                         {
-                            int channelIter = 0
-                            int frameIter = 0;
+                            Console.WriteLine("\n\n\n\n\n\n"+b.name);
+                            int channelIter = 0;
                             while(channelIter < b.channels.Count-1)
                             {
-                                //tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
+                                tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]); //same keyalready added
+
+
+                                
+                                Console.WriteLine("Channel Iter -----> " + channelIter);
+                                Console.WriteLine("Frame Iter -----> " + frameIter);
+                                Console.WriteLine("Data Iter -----> " + dataIter);
                                 channelIter += 1;
                                 dataIter += 1;
                             }
-                            Console.WriteLine("Channel Iter -----> " +channelIter);
-                            Console.WriteLine("Data Iter -----> " + dataIter);
+
 
                             b.frameData.Add(tmp);
                         }
 
 
                         frameCount += 1;
+                        Console.WriteLine(motionData.Count);
+                        Console.WriteLine(splitData.Count);
+
                     }
-                    
+
 
 
                 }

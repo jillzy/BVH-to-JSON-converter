@@ -191,14 +191,23 @@ namespace Converter
 
                     }
 
-                    //foreach (Bone b in bones)
-                    //{
-                    //    Console.WriteLine(b.frameData.Count);
-                    //    foreach (var k in b.frameData[1].Keys)
-                    //    {
-                    //        Console.WriteLine(b.frameData[1][k]);
-                    //    }
-                    //}
+                    //each bone
+                    foreach (Bone b in bones)
+                    {
+                        Console.WriteLine("\n\n\n\n" + b.name);
+                        //each frame
+                        foreach (var fd in b.frameData)
+                        {
+                            {
+                                //each channel
+                                foreach (var k in fd.Keys)
+                                {
+                                    Console.WriteLine(k + ": " + fd[k]);
+                                }
+                            }
+                            Console.WriteLine();
+                        }
+                    }
 
 
                 }

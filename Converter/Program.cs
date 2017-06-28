@@ -20,8 +20,9 @@ namespace Converter
         public Vector3 position;
         public Vector3 rotation;
 
+        public List<string> channels = new List<string>();
         public List<Bone> children = new List<Bone>();
-        public Dictionary<string, float> data = new Dictionary<string, float>();
+        public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
 
         public void print()
         {
@@ -46,13 +47,11 @@ namespace Converter
         static void Main(string[] args)
         {
             string line = "";
-            string prev = "";
 
             Bone currentBone = null;
 
             int frameTotal = 0;
-            int channelTotal = 0;
-
+            
             List<Bone> roots = new List<Bone>();
 
             List<string> motionData = new List<string>();
@@ -120,13 +119,26 @@ namespace Converter
                     {
                         currentBone = currentBone.children.Last();
                     }
-
-                    //add channel data to current
-
+                    
                 }
                 else if (line.Contains("}"))
                 {
                     currentBone = currentBone.parent;
+                } else if (line.Contains("Frame Time:"))
+                {
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        motionData.Add(line);
+                    }
+
+                } else if (line.Contains("CHANNELS"))
+                {
+                    char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
+                    string[] keys = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 1; i < keys.Length; i++)
+                    {
+                        currentBone.channels.Add(keys[i]);
+                    }
                 }
 
                 
@@ -218,6 +230,7 @@ namespace Converter
             foreach (Bone bone in roots) {
                 bone.print();
             }
+            
             // Suspend the screen.
             Console.ReadLine();
 

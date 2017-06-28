@@ -161,14 +161,15 @@ namespace Converter
                         frame.name = "frame" + frameCount;
                         int dataIter = 0;
                             
-                        Dictionary<string, string> tmp = new Dictionary<string, string>();
                         //go through each bone in order
                         foreach (Bone b in bones)
                         {
+                            Dictionary<string, string> tmp = new Dictionary<string, string>();
                             Console.WriteLine("\n\n\n\n\n\n"+b.name);
                             int channelIter = 0;
                             while(channelIter < b.channels.Count-1)
                             {
+              
                                 tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]); //same keyalready added
 
 

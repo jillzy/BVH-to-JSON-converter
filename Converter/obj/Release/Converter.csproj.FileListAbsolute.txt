@@ -1,0 +1,9 @@
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\Converter.exe.config
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\Converter.exe
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\Converter.pdb
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\Newtonsoft.Json.dll
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\System.Numerics.Vectors.dll
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\Newtonsoft.Json.xml
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\System.Numerics.Vectors.xml
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\obj\Release\Converter.exe
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\obj\Release\Converter.pdb

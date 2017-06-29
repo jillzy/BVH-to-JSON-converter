@@ -308,10 +308,9 @@ namespace Converter
             StreamWriter outputFile = new StreamWriter(new FileStream(output, FileMode.Create));
             js.Serialize(outputFile, frameJSON);
             outputFile.Flush();
-            Console.WriteLine("Successfully converted file. Press any key to continue...");
+            Console.WriteLine("Successfully converted file.");
 
-            Console.ReadKey();
-
+            
 
         }
 

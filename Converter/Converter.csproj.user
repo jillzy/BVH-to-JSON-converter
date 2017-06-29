@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>"C:\\Users\\jy\\Desktop\\test.txt" "C:\\Users\\jy\\Desktop\\output.txt"</StartArguments>
+    <StartArguments>test.bvh test.json</StartArguments>
+    <StartWorkingDirectory>C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Test\</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>test.bvh test.json</StartArguments>
+    <StartWorkingDirectory>C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Test\</StartWorkingDirectory>
+    <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <RemoteDebugMachine>..\Test.</RemoteDebugMachine>
   </PropertyGroup>
 </Project>

@@ -114,18 +114,14 @@ namespace Converter
             List<string> motionData = new List<string>();
             List<Bone> bones = new List<Bone>();
 
-            // Read the file and display it line by line.
+
             StreamReader file = new StreamReader(input);
 
 
             while ((line = file.ReadLine()) != null)
             {
 
-                /********************************
-                *                               *
-                * Find out number of frames     *
-                *                               *
-                *********************************/
+
                 if (line.Contains("Frames:"))
                 {
                     Int32.TryParse(line.Substring(line.IndexOf("Frames:") + 7,
@@ -208,7 +204,7 @@ namespace Converter
                     string[] keys = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
 
 
-                    for (int i = 2; i < keys.Length; i++) //but for some reason not getting the last key (eg. y position)
+                    for (int i = 2; i < keys.Length; i++)
                     {
                         currentBone.channels.Add(keys[i]);
 
@@ -222,7 +218,7 @@ namespace Converter
                     {
                         motionData.Add(line);
                     }
-                    //split by numbers
+
                     foreach (var md in motionData)
                     {
                         char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
@@ -230,39 +226,26 @@ namespace Converter
                         splitData.Add(data);
 
                     }
-                    //for each frame
+
                     for (int frameIter = 0; frameIter < motionData.Count; frameIter++)
                     {
                         int dataIter = 0;
-
-                        //go through each bone in order
+                        
                         foreach (Bone b in bones)
                         {
                             Dictionary<string, float> tmp = new Dictionary<string, float>();
                             int channelIter = 0;
-                            //for each of its channels
+
                             while (channelIter < b.channels.Count)
                             {
-                                //add the chanel key and corresponding data to a dict
                                 tmp.Add(b.channels[channelIter], float.Parse(splitData[frameIter][dataIter]));
-
-
                                 channelIter += 1;
                                 dataIter += 1;
                             }
-
-
-                            //add dict to a list of frameData
                             b.frameData.Add(tmp);
 
                         }
-
-
-
                     }
-
-        
-
                 }
 
 

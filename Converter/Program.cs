@@ -16,7 +16,7 @@ namespace Converter
         public Bone parent;
 
 
-
+        public Vector3 offset;
         public Vector3 position;
         public Vector3 rotation;
 
@@ -121,6 +121,26 @@ namespace Converter
                         currentBone = currentBone.children.Last();
                     }
 
+                } else if (line.Contains("OFFSET"))
+                {
+                    char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
+                    string[] offsets = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 1; i < offsets.Length; i++)
+                    {
+                        float offset = float.Parse(offsets[i]);
+                        switch (i) {
+                            case 1:
+                                currentBone.offset.X = offset;
+                                break;
+                            case 2:
+                                currentBone.offset.Y = offset;
+                                break;
+                            case 3:
+                                currentBone.offset.Z = offset;
+                                break;
+                        }
+                    }
+                    
                 }
                 else if (line.Contains("}"))
                 {
@@ -194,7 +214,7 @@ namespace Converter
                     //each bone
                     foreach (Bone b in bones)
                     {
-                        Console.WriteLine("\n\n\n\n" + b.name);
+                        //Console.WriteLine("\n\n\n\n" + b.name);
                         //each frame
                         foreach (var fd in b.frameData)
                         {
@@ -202,10 +222,10 @@ namespace Converter
                                 //each channel
                                 foreach (var k in fd.Keys)
                                 {
-                                    Console.WriteLine(k + ": " + fd[k]);
+                                    //Console.WriteLine(k + ": " + fd[k]);
                                 }
                             }
-                            Console.WriteLine();
+                            //Console.WriteLine();
                         }
                     }
 

@@ -7,3 +7,4 @@ C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Releas
 C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Release\System.Numerics.Vectors.xml
 C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\obj\Release\Converter.exe
 C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\obj\Release\Converter.pdb
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\obj\Release\Converter.csprojResolveAssemblyReference.cache

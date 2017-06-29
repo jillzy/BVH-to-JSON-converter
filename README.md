@@ -5,3 +5,4 @@ Run executable in command line with usage: converter.exe [input filepath] [outpu
 Produces JSON file with valid JSON object
 To prettify: http://jsonviewer.stack.hu/
 
+

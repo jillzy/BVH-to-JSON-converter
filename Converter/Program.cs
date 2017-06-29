@@ -13,22 +13,19 @@ namespace Converter
 
 
     class Bone
-    {
+    { 
         const string xpos = "Xposition";
         const string ypos = "Yposition";
         const string zpos = "Zposition";
         const string xrot = "Xrotation";
         const string yrot = "Yrotation";
         const string zrot = "Zrotation";
-
         public string name;
         public string type;
         public Bone parent;
-
         public Vector3 offset;
-        
-        public List<Bone> bones = new List<Bone>();
         public List<string> channels = new List<string>();
+        public List<Bone> bones = new List<Bone>();
         public List<Bone> children = new List<Bone>();
         public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
 
@@ -79,16 +76,6 @@ namespace Converter
             return rotation;
         }
 
-        public void print()
-        {
-            Console.WriteLine(name);
-            foreach (var child in children)
-            {
-                child.print();
-            }
-
-
-        }
 
     }
 
@@ -101,36 +88,22 @@ namespace Converter
                 Console.WriteLine("Usage: converter.exe [input .bvh path] [output file path]");
                 Console.ReadLine();
             }
+
             string input = args[0];
             string output = args[1];
             string line = "";
-
-            Bone currentBone = null;
-
             int frameTotal = 0;
-
+            Bone currentBone = null;
             List<Bone> roots = new List<Bone>();
+            List<Bone> bones = new List<Bone>();
             List<string[]> splitData = new List<string[]>();
             List<string> motionData = new List<string>();
-            List<Bone> bones = new List<Bone>();
-
-
             StreamReader file = new StreamReader(input);
-
 
             while ((line = file.ReadLine()) != null)
             {
-
-
-                if (line.Contains("Frames:"))
-                {
-                    Int32.TryParse(line.Substring(line.IndexOf("Frames:") + 7,
-                        line.Length - 7),
-                        out frameTotal);
-                }
-
-
-                else if (line.Contains("ROOT"))
+                
+                if (line.Contains("ROOT"))
                 {
                     Bone b = new Bone();
                     char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };

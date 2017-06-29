@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Converter
 {
@@ -32,7 +34,7 @@ namespace Converter
 
         public Matrix4x4 getWorldTransform(int frameNumber)
         {
-            var matrix = new Matrix4x4();
+            var matrix = Matrix4x4.Identity;
 
             matrix.Translation = offset;
             matrix = Matrix4x4.Transform(matrix, getQuaternion(frameNumber));
@@ -94,6 +96,13 @@ namespace Converter
     {
         static void Main(string[] args)
         {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Usage: converter.exe [input .bvh path] [output file path]");
+                Console.ReadLine();
+            }
+            string input = args[0];
+            string output = args[1];
             string line = "";
 
             Bone currentBone = null;
@@ -106,8 +115,7 @@ namespace Converter
             List<Bone> bones = new List<Bone>();
 
             // Read the file and display it line by line.
-            System.IO.StreamReader file =
-               new System.IO.StreamReader("C:\\Users\\jy\\Desktop\\test.txt");
+            StreamReader file = new StreamReader(input);
 
 
             while ((line = file.ReadLine()) != null)
@@ -253,25 +261,7 @@ namespace Converter
 
                     }
 
-                    ////each bone
-                    //foreach (Bone b in bones)
-                    //{
-                    //    Console.WriteLine(b.offset.ToString());
-                    //    //Console.WriteLine("\n\n\n\n" + b.name);
-                    //    //each frame
-                    //    foreach (var fd in b.frameData)
-                    //    {
-                    //        {
-                    //            //each channel
-                    //            foreach (var k in fd.Keys)
-                    //            {
-                    //                //Console.WriteLine(k + ": " + fd[k]);
-                    //            }
-                    //        }
-                    //        //Console.WriteLine();
-                    //    }
-                    //}
-
+        
 
                 }
 
@@ -286,8 +276,6 @@ namespace Converter
 
             }
             file.Close();
-
-            var javaScriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
 
             Dictionary<string,Dictionary<string,Dictionary<string, float[]>>> frameJSON
                 = new Dictionary<string, Dictionary<string, Dictionary<string, float[]>>>();
@@ -305,7 +293,6 @@ namespace Converter
                     Quaternion rotation;
                     Matrix4x4.Decompose(b.getWorldTransform(i), out scale, out rotation, out translation);
 
-                    
                     frameJSON["Frame" + i][b.name].Add("Position",
                         new float[] { translation.X, translation.Y, translation.Z });
 
@@ -316,13 +303,14 @@ namespace Converter
                 }
 
             }
-                string jsonString = javaScriptSerializer.Serialize(frameJSON);
-                //Console.WriteLine(jsonString);
 
-            
+            JsonSerializer js = JsonSerializer.Create();
+            StreamWriter outputFile = new StreamWriter(new FileStream(output, FileMode.Create));
+            js.Serialize(outputFile, frameJSON);
+            outputFile.Flush();
+            Console.WriteLine("Successfully converted file. Press any key to continue...");
 
-            // Suspend the screen.
-            Console.ReadLine();
+            Console.ReadKey();
 
 
         }

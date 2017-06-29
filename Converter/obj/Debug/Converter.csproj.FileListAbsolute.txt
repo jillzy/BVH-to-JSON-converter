@@ -6,3 +6,5 @@ c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\obj\Debug\
 c:\users\jy\documents\visual studio 2015\Projects\Converter\Converter\obj\Debug\Converter.pdb
 C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\System.Numerics.Vectors.dll
 C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\Newtonsoft.Json.dll
+C:\Users\jy\Documents\Visual Studio 2015\Projects\Converter\Converter\bin\Debug\Newtonsoft.Json.xml

@@ -1,4 +1,4 @@
-This program produces JSON file from BVH file with valid JSON object
+This program produces JSON file from a BVH file with a valid JSON object
 To prettify: http://jsonviewer.stack.hu/
 
 - Build project in Visual Studios as Release

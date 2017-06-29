@@ -9,22 +9,60 @@ using System.Text.RegularExpressions;
 namespace Converter
 {
 
+
     class Bone
     {
+        const string xpos = "Xposition";
+        const string ypos = "Yposition";
+        const string zpos = "Zposition";
+        const string xrot = "Xrotation";
+        const string yrot = "Yrotation";
+        const string zrot = "Zrotation";
+
         public string name;
         public string type;
         public Bone parent;
 
 
         public Vector3 offset;
-        public Vector3 position;
-        public Vector3 rotation;
-
+        
         public List<Bone> bones = new List<Bone>();
         public List<string> channels = new List<string>();
         public List<Bone> children = new List<Bone>();
-        //public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
-        public List<Dictionary<string, string>> frameData = new List<Dictionary<string, string>>();
+        public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
+        
+        public Vector3 getWorldPositionForFrame(int frameNumber)
+        {
+            Vector3 position = new Vector3();
+
+            if (type == "root")
+            {
+                position.X = offset.X + frameData[frameNumber][xpos];
+                position.Y = offset.Y + frameData[frameNumber][ypos];
+                position.Z = offset.Z + frameData[frameNumber][zpos];
+
+            } else if (type == "joint")
+            {
+                position = offset + parent.getWorldPositionForFrame(frameNumber);
+
+            }
+
+            return position;
+
+        }
+
+        public Quaternion getQuaternion(int frameNumber)
+        {
+            Quaternion rotation = new Quaternion();
+
+            float x = frameData[frameNumber][xrot];
+            float y = frameData[frameNumber][yrot];
+            float z = frameData[frameNumber][zrot];
+
+            rotation = Quaternion.CreateFromYawPitchRoll(y, x, z);
+
+            return rotation;
+        }
 
         public void print()
         {
@@ -179,20 +217,18 @@ namespace Converter
                     //for each frame
                     for (int frameIter = 0; frameIter < motionData.Count; frameIter++)
                     {
-                        Frame frame = new Frame();
-                        frame.name = "frame" + frameCount;
                         int dataIter = 0;
                             
                         //go through each bone in order
                         foreach (Bone b in bones)
                         {
-                            Dictionary<string, string> tmp = new Dictionary<string, string>();
+                            Dictionary<string, float> tmp = new Dictionary<string, float>();
                             int channelIter = 0;
                             //for each of its channels
                             while(channelIter < b.channels.Count)
                             {
                                 //add the chanel key and corresponding data to a dict
-                                tmp.Add(b.channels[channelIter], splitData[frameIter][dataIter]);
+                                tmp.Add(b.channels[channelIter], float.Parse(splitData[frameIter][dataIter]));
 
 
                                 channelIter += 1;
@@ -205,29 +241,28 @@ namespace Converter
                             
                         }
 
-
-                        frameCount += 1;
-
+                        
 
                     }
 
-                    //each bone
-                    foreach (Bone b in bones)
-                    {
-                        //Console.WriteLine("\n\n\n\n" + b.name);
-                        //each frame
-                        foreach (var fd in b.frameData)
-                        {
-                            {
-                                //each channel
-                                foreach (var k in fd.Keys)
-                                {
-                                    //Console.WriteLine(k + ": " + fd[k]);
-                                }
-                            }
-                            //Console.WriteLine();
-                        }
-                    }
+                    ////each bone
+                    //foreach (Bone b in bones)
+                    //{
+
+                    //    //Console.WriteLine("\n\n\n\n" + b.name);
+                    //    //each frame
+                    //    foreach (var fd in b.frameData)
+                    //    {
+                    //        {
+                    //            //each channel
+                    //            foreach (var k in fd.Keys)
+                    //            {
+                    //                //Console.WriteLine(k + ": " + fd[k]);
+                    //            }
+                    //        }
+                    //        //Console.WriteLine();
+                    //    }
+                    //}
 
 
                 }

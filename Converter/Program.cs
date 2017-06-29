@@ -23,38 +23,51 @@ namespace Converter
         public string type;
         public Bone parent;
 
-
         public Vector3 offset;
         
         public List<Bone> bones = new List<Bone>();
         public List<string> channels = new List<string>();
         public List<Bone> children = new List<Bone>();
         public List<Dictionary<string, float>> frameData = new List<Dictionary<string, float>>();
+
+        public Matrix4x4 getWorldTransform(int frameNumber)
+        {
+            var matrix = new Matrix4x4();
+
+            matrix.Translation = offset;
+            matrix = Matrix4x4.Transform(matrix, getQuaternion(frameNumber));
+
+            if (parent != null)
+            {
+                matrix = Matrix4x4.Multiply(parent.getWorldTransform(frameNumber), matrix);
+            }
+
+            return matrix;
+        }
         
         public Vector3 getWorldPositionForFrame(int frameNumber)
         {
-            Vector3 position = new Vector3();
+            Vector3 scale;
+            Vector3 translation;
+            Quaternion rotation;
+            Matrix4x4.Decompose(getWorldTransform(frameNumber), out scale, out rotation, out translation);
 
-            if (type == "root")
-            {
-                position.X = offset.X + frameData[frameNumber][xpos];
-                position.Y = offset.Y + frameData[frameNumber][ypos];
-                position.Z = offset.Z + frameData[frameNumber][zpos];
+            return translation;
+        }
 
-            } else if (type == "joint")
-            {
-                position = offset + parent.getWorldPositionForFrame(frameNumber);
+        public Quaternion getWorldRotationForFrame(int frameNumber)
+        {
+            Vector3 scale;
+            Vector3 translation;
+            Quaternion rotation;
+            Matrix4x4.Decompose(getWorldTransform(frameNumber), out scale, out rotation, out translation);
 
-            }
-
-            return position;
-
+            return rotation;
         }
 
         public Quaternion getQuaternion(int frameNumber)
         {
             Quaternion rotation = new Quaternion();
-
             float x = frameData[frameNumber][xrot];
             float y = frameData[frameNumber][yrot];
             float z = frameData[frameNumber][zrot];
@@ -76,11 +89,6 @@ namespace Converter
         }
 
     }
-    class Frame
-    {
-        public string name = "";
-        public List<Bone> bones = new List<Bone>();
-    }
 
     class Program
     {
@@ -91,11 +99,10 @@ namespace Converter
             Bone currentBone = null;
 
             int frameTotal = 0;
-            
+
             List<Bone> roots = new List<Bone>();
             List<string[]> splitData = new List<string[]>();
             List<string> motionData = new List<string>();
-            List<Frame> frames = new List<Frame>();
             List<Bone> bones = new List<Bone>();
 
             // Read the file and display it line by line.
@@ -159,14 +166,16 @@ namespace Converter
                         currentBone = currentBone.children.Last();
                     }
 
-                } else if (line.Contains("OFFSET"))
+                }
+                else if (line.Contains("OFFSET"))
                 {
                     char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
                     string[] offsets = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
                     for (int i = 1; i < offsets.Length; i++)
                     {
                         float offset = float.Parse(offsets[i]);
-                        switch (i) {
+                        switch (i)
+                        {
                             case 1:
                                 currentBone.offset.X = offset;
                                 break;
@@ -178,7 +187,7 @@ namespace Converter
                                 break;
                         }
                     }
-                    
+
                 }
                 else if (line.Contains("}"))
                 {
@@ -201,7 +210,6 @@ namespace Converter
                 else if (line.Contains("Frame Time:"))
 
                 {
-                    int frameCount = 0;
                     while ((line = file.ReadLine()) != null)
                     {
                         motionData.Add(line);
@@ -211,21 +219,21 @@ namespace Converter
                     {
                         char[] splitChars = new Char[] { ' ', '\t', '\n', '\r', '\f' };
                         string[] data = md.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-                        splitData.Add(data);                  
+                        splitData.Add(data);
 
                     }
                     //for each frame
                     for (int frameIter = 0; frameIter < motionData.Count; frameIter++)
                     {
                         int dataIter = 0;
-                            
+
                         //go through each bone in order
                         foreach (Bone b in bones)
                         {
                             Dictionary<string, float> tmp = new Dictionary<string, float>();
                             int channelIter = 0;
                             //for each of its channels
-                            while(channelIter < b.channels.Count)
+                            while (channelIter < b.channels.Count)
                             {
                                 //add the chanel key and corresponding data to a dict
                                 tmp.Add(b.channels[channelIter], float.Parse(splitData[frameIter][dataIter]));
@@ -235,20 +243,20 @@ namespace Converter
                                 dataIter += 1;
                             }
 
-                            
+
                             //add dict to a list of frameData
                             b.frameData.Add(tmp);
-                            
+
                         }
 
-                        
+
 
                     }
 
                     ////each bone
                     //foreach (Bone b in bones)
                     //{
-
+                    //    Console.WriteLine(b.offset.ToString());
                     //    //Console.WriteLine("\n\n\n\n" + b.name);
                     //    //each frame
                     //    foreach (var fd in b.frameData)
@@ -278,14 +286,45 @@ namespace Converter
 
             }
             file.Close();
-            foreach (Bone bone in roots) {
-                //bone.print();
+
+            var javaScriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+            Dictionary<string,Dictionary<string,Dictionary<string, float[]>>> frameJSON
+                = new Dictionary<string, Dictionary<string, Dictionary<string, float[]>>>();
+
+            for (int i = 0; i < motionData.Count; i++)
+            {
+                frameJSON.Add("Frame" + i,
+                    new Dictionary<string, Dictionary<string, float[]>>());
+
+                foreach (Bone b in bones)
+                {
+                    frameJSON["Frame" + i].Add(b.name, new Dictionary<string, float[]>());
+                    Vector3 scale;
+                    Vector3 translation;
+                    Quaternion rotation;
+                    Matrix4x4.Decompose(b.getWorldTransform(i), out scale, out rotation, out translation);
+
+                    
+                    frameJSON["Frame" + i][b.name].Add("Position",
+                        new float[] { translation.X, translation.Y, translation.Z });
+
+                    frameJSON["Frame" + i][b.name].Add("Rotation",
+                        new float[] { rotation.W, rotation.X, rotation.Y, rotation.Z });
+
+
+                }
+
             }
+                string jsonString = javaScriptSerializer.Serialize(frameJSON);
+                //Console.WriteLine(jsonString);
+
             
+
             // Suspend the screen.
             Console.ReadLine();
 
-            
+
         }
 
     }

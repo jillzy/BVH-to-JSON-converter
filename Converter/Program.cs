@@ -92,7 +92,6 @@ namespace Converter
             string input = args[0];
             string output = args[1];
             string line = "";
-            int frameTotal = 0;
             Bone currentBone = null;
             List<Bone> roots = new List<Bone>();
             List<Bone> bones = new List<Bone>();
@@ -102,7 +101,7 @@ namespace Converter
 
             while ((line = file.ReadLine()) != null)
             {
-                
+                //create bone objects
                 if (line.Contains("ROOT"))
                 {
                     Bone b = new Bone();
@@ -200,6 +199,7 @@ namespace Converter
 
                     }
 
+                    //load data into bone objects
                     for (int frameIter = 0; frameIter < motionData.Count; frameIter++)
                     {
                         int dataIter = 0;
@@ -233,6 +233,7 @@ namespace Converter
             }
             file.Close();
 
+            //build the object to jsonify
             Dictionary<string,Dictionary<string,Dictionary<string, float[]>>> frameJSON
                 = new Dictionary<string, Dictionary<string, Dictionary<string, float[]>>>();
 
